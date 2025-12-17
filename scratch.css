@@ -1,0 +1,136 @@
+p {
+    font-size: 20px;
+    color: black;
+    font-family:'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+}
+
+body {
+    background-color: rgb(169, 200, 201);
+}
+
+h1 {
+    font-size: 40px;
+    color: black;
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+}
+
+h3 {
+    font-size: 25px;
+    color: black;
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    text-align: center;
+}
+
+ol {
+    font-size: 20px;
+    color: black;
+    font-family:'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+}
+
+li > ul {
+    margin-top: 0.75rem;
+}
+
+ul li {
+    font-size: 15px;
+    color: black;
+    font-family:'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    line-height: 1.6;
+    margin-bottom: 1.5rem;
+    margin-right: 70px;
+}
+
+a {
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    color: rgb(41, 119, 122);
+    size: 18px;
+    font-weight: bold;
+    text-decoration: none;
+    margin-left: 10px;
+    margin-right: 10px;
+}
+
+a:hover {
+    color: rgb(23, 64, 65);
+}
+
+.main-body {
+    text-align: justify;
+    position: relative;
+    border: 20px solid;
+    border-color: cadetblue;
+    border-width: 5px;
+    padding: 15px;
+    padding-left: 25px;
+    padding-right: 25px;
+    margin-left: 50px;
+    margin-right: 50px;
+    background-color: rgb(205, 220, 221);
+}
+
+.main-body img {
+    display: block;
+    margin: 0 auto;
+    max-width: 200px;
+    height: auto;
+}
+
+footer {
+    background-color: rgb(231, 231, 231);
+    color: darkgray;
+    padding: 1rem 0;
+    text-align: center;
+    border: 20px solid;
+    border-color: rgb(145, 185, 187);
+    border-width: 5px;
+}
+
+.footstyle {
+    color: darkgray;
+    font-size: 15px;
+}
+
+.center {
+    text-align: center;
+}
+
+.video-frame {
+    position: relative;
+    width: 600px;       /* or 100% */
+    max-width: 100%;
+    padding-top: 40%; /* 16:9 ratio */
+
+    border: 3px solid rgba(0, 0, 0, 0.4);
+    border-radius: 12px;
+    background-color: rgba(0, 0, 0, 0.1);
+
+    overflow: hidden;
+    box-shadow: 0 8px 20px rgba(0,0,0,0.25);
+    margin: 0 auto; /* centers it */
+}
+
+.video-frame iframe {
+    position: absolute;
+    top: 0;
+    left: 0;
+
+    width: 100%;
+    height: 100%;
+    border: none;
+}
+
+.tableau-wrapper {
+  max-width: 900px;
+  height: 500px;
+  margin: 40px auto;
+  border: 2px solid #ccc;
+  border-radius: 8px;
+  padding: 10px;
+  background-color: #f9f9f9;
+}
+
+.tableau-wrapper object,
+.tableau-wrapper iframe {
+  width: 100% !important;
+  height: 100% !important;
+}

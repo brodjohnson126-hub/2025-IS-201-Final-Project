@@ -1,0 +1,317 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>4-Letter Wordle+</title>
+  <style>
+    body {
+      font-family: system-ui, -apple-system, BlinkMacSystemFont, sans-serif;
+      background: linear-gradient(135deg, #4fd1c5, #38b2ac);
+      color: #fff;
+      min-height: 100vh;
+      margin: 0;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      padding-top: 80px;
+      padding-bottom: 80px;
+    }
+
+    nav {
+      position: fixed;
+      top: 16px;
+      left: 16px;
+      display: flex;
+      gap: 14px;
+      font-size: 0.9rem;
+      z-index: 10;
+    }
+
+    nav a {
+      color: #e6fffa;
+      text-decoration: none;
+      font-weight: 600;
+    }
+
+    nav a:hover {
+      text-decoration: underline;
+    }
+
+    .app {
+      background: rgba(0, 0, 0, 0.35);
+      padding: 1.8rem;
+      border-radius: 18px;
+      box-shadow: 0 20px 40px rgba(0, 0, 0, 0.35);
+      width: min(420px, 95vw);
+      max-width: 500px;
+      text-align: center;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+    }
+
+    h1 {
+      margin-top: 0;
+      letter-spacing: 3px;
+      font-size: clamp(1.4rem, 4vw, 1.8rem);
+    }
+
+    .subtitle {
+      font-size: 0.9rem;
+      opacity: 0.85;
+      margin-top: -6px;
+    }
+
+    .grid {
+      display: grid;
+      grid-template-rows: repeat(6, 1fr);
+      gap: 10px;
+      margin: 20px auto;
+    }
+
+    .row {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 8px;
+      justify-items: center;
+    }
+
+    .tile {
+      width: clamp(48px, 10vw, 60px);
+      height: clamp(52px, 12vw, 60px);
+      border-radius: 10px;
+      background: rgba(255, 255, 255, 0.15);
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      font-size: clamp(1.2rem, 4vw, 1.4rem);
+      font-weight: bold;
+      text-transform: uppercase;
+      border: 2px solid rgba(255, 255, 255, 0.25);
+      transition: transform 0.2s, background 0.3s, border 0.3s;
+    }
+
+    .tile.filled {
+      transform: scale(1.05);
+    }
+
+    .correct {
+      background: #48bb78;
+      border-color: #48bb78;
+    }
+
+    .present {
+      background: #f6e05e;
+      border-color: #f6e05e;
+      color: #000;
+    }
+
+    .absent {
+      background: #4a5568;
+      border-color: #4a5568;
+    }
+
+    .letters-used {
+      margin-top: 16px;
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: center;
+      gap: 6px;
+    }
+
+    .letters-used span {
+      display: inline-block;
+      width: 28px;
+      height: 28px;
+      line-height: 28px;
+      text-align: center;
+      border-radius: 6px;
+      background: rgba(255,255,255,0.15);
+      font-weight: bold;
+      text-transform: uppercase;
+    }
+
+    .letters-used span.used {
+      background: #4a5568;
+      color: #888;
+    }
+
+    .footer {
+      margin-top: 16px;
+      font-size: 0.8rem;
+      opacity: 0.7;
+    }
+
+    input {
+      width: 80%;
+      padding: 10px;
+      font-size: 1.2rem;
+      text-transform: uppercase;
+      border-radius: 10px;
+      border: none;
+      outline: none;
+      text-align: center;
+      margin-top: 12px;
+    }
+
+    button {
+      margin-top: 12px;
+      padding: 12px 16px;
+      font-size: 1rem;
+      border-radius: 12px;
+      border: none;
+      background: linear-gradient(90deg, #81e6d9, #38b2ac);
+      color: #033;
+      cursor: pointer;
+      font-weight: bold;
+      margin-right: 8px;
+    }
+
+    button:hover {
+      opacity: 0.9;
+    }
+  </style>
+</head>
+<body>
+
+  <nav>
+    <a href="scratch.html">Home</a>
+    <a href="language.html">Language List</a>
+    <a href="index.html">My Resume</a>
+    <a href="webapp.html">WORDLE Clone</a>
+  </nav>
+
+  <div class="app">
+    <h1>4-LETTER WORDLE+</h1>
+    <p class="subtitle">6 guesses. Short words, sharp thinking.</p>
+
+    <div id="grid" class="grid"></div>
+    <input id="guessInput" type="text" maxlength="4" placeholder="Type your guess" />
+    <div>
+      <button onclick="submitGuess()">Enter</button>
+      <button onclick="resetGame()">New Game</button>
+    </div>
+
+    <div class="letters-used" id="lettersUsed"></div>
+    <div id="message" class="message"></div>
+    <div class="footer">Built with AI + human creativity</div>
+  </div>
+
+  <script>
+    const WORDS = ["code","idea","play","logic","data","mind","math","word","blue","wave"];
+    let secretWord;
+    let maxGuesses = 6;
+    let currentGuess = 0;
+    let guessedLetters = {};
+
+    const grid = document.getElementById("grid");
+    const message = document.getElementById("message");
+    const lettersUsedDiv = document.getElementById("lettersUsed");
+    const input = document.getElementById("guessInput");
+
+    function startGame() {
+      secretWord = WORDS[Math.floor(Math.random() * WORDS.length)];
+      currentGuess = 0;
+      guessedLetters = {};
+      grid.innerHTML = '';
+      lettersUsedDiv.innerHTML = '';
+      message.textContent = '';
+      input.value = '';
+      input.disabled = false;
+      input.focus();
+
+      for (let r = 0; r < maxGuesses; r++) {
+        const row = document.createElement("div");
+        row.className = "row";
+        for (let c = 0; c < 4; c++) {
+          const tile = document.createElement("div");
+          tile.className = "tile";
+          row.appendChild(tile);
+        }
+        grid.appendChild(row);
+      }
+
+      for (let i = 65; i <= 90; i++) {
+        const span = document.createElement('span');
+        span.textContent = String.fromCharCode(i);
+        lettersUsedDiv.appendChild(span);
+      }
+    }
+
+    function submitGuess() {
+      const guess = input.value.toLowerCase();
+      if (guess.length !== 4) {
+        message.textContent = 'Guess must be 4 letters';
+        return;
+      }
+      if (currentGuess >= maxGuesses) return;
+
+      const row = grid.children[currentGuess];
+      const secretArray = secretWord.split("");
+
+      for (let i = 0; i < 4; i++) {
+        const tile = row.children[i];
+        tile.textContent = guess[i];
+        tile.classList.add("filled");
+        guessedLetters[guess[i]] = guessedLetters[guess[i]] || false;
+        if (guess[i] === secretWord[i]) {
+          tile.classList.add("correct");
+          secretArray[i] = null;
+        }
+      }
+
+      for (let i = 0; i < 4; i++) {
+        const tile = row.children[i];
+        if (tile.classList.contains("correct")) continue;
+        const index = secretArray.indexOf(guess[i]);
+        if (index !== -1) {
+          tile.classList.add("present");
+          secretArray[index] = null;
+        } else {
+          tile.classList.add("absent");
+          guessedLetters[guess[i]] = true;
+        }
+      }
+
+      updateLetterList();
+
+      if (guess === secretWord) {
+        message.textContent = "🎉 You cracked the word!";
+        input.disabled = true;
+      } else {
+        currentGuess++;
+        if (currentGuess === maxGuesses) {
+          message.textContent = `Game over! The word was "${secretWord.toUpperCase()}".`;
+          input.disabled = true;
+        }
+      }
+      input.value = '';
+      input.focus();
+    }
+
+    function updateLetterList() {
+      const spans = lettersUsedDiv.querySelectorAll('span');
+      spans.forEach(span => {
+        if (guessedLetters[span.textContent.toLowerCase()]) {
+          span.classList.add('used');
+        } else {
+          span.classList.remove('used');
+        }
+      });
+    }
+
+    function resetGame() {
+      startGame();
+    }
+
+    input.addEventListener('keyup', (e) => {
+      if (e.key === 'Enter') submitGuess();
+    });
+
+    startGame();
+  </script>
+</body>
+</html>
+
+
